@@ -17,10 +17,6 @@ const servefile = async (res, filepath, contenttype) => {
 const loadlink = async () => {
   try {
     const data = await readFile(DATA_FILE, "utf-8");
-    if (!data) {
-      await writeFile(DATA_FILE, JSON.stringify({}));
-      return {};
-    }
     return JSON.parse(data);
   } catch (error) {
     if (error.code === "ENOENT") {
