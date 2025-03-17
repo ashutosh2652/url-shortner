@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Url-shortner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>URL Shortener</h1>
+        <form id="shortner-form">
+            <div>
+                <label for="url">Enter Url:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  </label>
+                <input type="url" name="url" id="url" required>
+            </div>
+            <div>
+                <label for="shortCode">Enter shortcode:</label>
+                <input type="text" name="shortCode" id="shortCode" required>
+            </div>
+            <button type="submit">Shortend</button>
+        </form>
+        <h2>Shortened URLs</h2>
+        <ul id="shortened-urls"></ul>
+    </div>
+
+    <script>
+        document.getElementById('shortner-form').addEventListener("submit",async(event)=>{
+            event.preventDefault();
+            const formdata= new FormData(event.target);
+            const url=formdata.get('url');
+            const shortCode=formdata.get('shortCode');
+            console.log(url,shortCode);
+            try {
+                const response=await fetch("/shorten",{
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({url,shortCode})
+                });
+                if(response.ok){
+                    alert("form submitted successfully");
+                }else{
+                    const errormessage=await response.text();
+                    alert(errormessage);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        })
+    </script>
+</body>
+</html>
