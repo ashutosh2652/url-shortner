@@ -11,7 +11,7 @@
         <h1>URL Shortener</h1>
         <form id="shortner-form">
             <div>
-                <label for="url">Enter Url:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  </label>
+                <label for="url">Enter Url:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
                 <input type="url" name="url" id="url" required>
             </div>
             <div>
@@ -25,10 +25,26 @@
     </div>
 
     <script>
+
+        const fetchshortendurl= async ()=>{
+            const response= await fetch("/links");
+            const links=await response.json();
+            console.log("links",links);
+            const list=document.getElementById("shortened-urls");
+            list.innerHTML="";
+            for(const [shortcode,url] of Object.entries(links)){
+                const truncatedurl=url.length>=30 ? `${url.slice(0,30)}...`:url;
+                let li=document.createElement("li");
+                li.innerHTML=`<a href="/${shortcode}" target="_blank">-${window.location.origin}/${shortcode}</a>  -> ${truncatedurl}`;
+                //window.location.origin will give the current url which consist of protocol like http or https.
+                list.appendChild(li);
+            }
+        }
+
         document.getElementById('shortner-form').addEventListener("submit",async(event)=>{
             event.preventDefault();
             const formdata= new FormData(event.target);
-            const url=formdata.get('url');
+            const url=formdata.get('url');  //get that based on the string passed in the name attribute
             const shortCode=formdata.get('shortCode');
             console.log(url,shortCode);
             try {
@@ -38,7 +54,9 @@
                     body:JSON.stringify({url,shortCode})
                 });
                 if(response.ok){
+                    fetchshortendurl();
                     alert("form submitted successfully");
+                    event.target.reset(); //to reset the form to its initial value.
                 }else{
                     const errormessage=await response.text();
                     alert(errormessage);
@@ -47,6 +65,7 @@
                 console.log(error);
             }
         })
+        fetchshortendurl();
     </script>
 </body>
 </html>
